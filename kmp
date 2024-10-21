@@ -1,0 +1,69 @@
+public class Main{
+
+    // Function to perform KMP pattern searching
+    public static void KMPSearch(String pattern, String text) {
+        int M = pattern.length();
+        int N = text.length();
+
+        // Create LPS array
+        int[] lps = new int[M];
+
+        // Preprocess the pattern to calculate the lps array
+        computeLPSArray(pattern, lps);
+
+        int i = 0; // Index for text
+        int j = 0; // Index for pattern
+
+        // Iterate through the text
+        while (i < N) {
+            if (pattern.charAt(j) == text.charAt(i)) {
+                j++;
+                i++;
+            }
+
+            if (j == M) {
+                System.out.println("Found pattern at index " + (i - j));
+                j = lps[j - 1]; // Use the LPS array to shift pattern
+            }
+
+            // Mismatch after j matches
+            else if (i < N && pattern.charAt(j) != text.charAt(i)) {
+                // Instead of shifting the whole pattern, just shift by lps value
+                if (j != 0) {
+                    j = lps[j - 1];
+                } else {
+                    i++; // If j is 0, move to the next character in the text
+                }
+            }
+        }
+    }
+
+    // Optimized function to compute the LPS array
+    private static void computeLPSArray(String pattern, int[] lps) {
+        int length = 0; // Length of the previous longest prefix suffix
+        lps[0] = 0; // lps[0] is always 0
+
+        int i = 1; // Start from the second character
+
+        while (i < pattern.length()) {
+            if (pattern.charAt(i) == pattern.charAt(length)) {
+                length++;
+                lps[i] = length;
+                i++;
+            } else {
+                if (length != 0) {
+                    length = lps[length - 1]; // Use the LPS array to skip recomputation
+                } else {
+                    lps[i] = 0;
+                    i++;
+                }
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        String text = "ABABDABACDABABCABAB";
+        String pattern = "ABABCABAB";
+        KMPSearch(pattern, text);
+    }
+}
