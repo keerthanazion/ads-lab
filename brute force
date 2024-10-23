@@ -1,0 +1,38 @@
+public class Main {
+    // Function to perform brute force string matching
+    public static int bruteForceSearch(String text, String pattern) {
+        int n = text.length();
+        int m = pattern.length();
+
+        // Loop through the text to find the pattern
+        for (int i = 0; i <= n - m; i++) {
+            int j;
+            // Compare the pattern with the substring of the text
+            for (j = 0; j < m; j++) {
+                if (text.charAt(i + j) != pattern.charAt(j)) {
+                    break; // Mismatch found, break the loop
+                }
+            }
+
+            // If the pattern is found, return the index
+            if (j == m) {
+                return i; // Match found at index i
+            }
+        }
+
+        return -1; // No match found
+    }
+
+    public static void main(String[] args) {
+        String text = "ABCABCDABCD";
+        String pattern = "ABCD";
+
+        int result = bruteForceSearch(text, pattern);
+
+        if (result != -1) {
+            System.out.println("Pattern found at index: " + result);
+        } else {
+            System.out.println("Pattern not found.");
+        }
+    }
+}
