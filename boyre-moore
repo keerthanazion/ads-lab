@@ -1,0 +1,59 @@
+import java.util.HashMap;
+import java.util.Map;
+
+public class Main{
+    // Function to preprocess the pattern and generate the bad character shift table
+    public static Map<Character, Integer> preprocessPattern(String pattern) {
+        Map<Character, Integer> badCharShift = new HashMap<>();
+        int m = pattern.length();
+
+        // Fill the bad character shift table with the rightmost occurrence of each character
+        for (int i = 0; i < m - 1; i++) {
+            badCharShift.put(pattern.charAt(i), m - 1 - i);
+        }
+
+        return badCharShift;
+    }
+
+    // Function to perform the Boyer-Moore search
+    public static int boyerMooreSearch(String text, String pattern) {
+        Map<Character, Integer> badCharShift = preprocessPattern(pattern);
+        int n = text.length();
+        int m = pattern.length();
+
+        int shift = 0; // Shift of the pattern with respect to the text
+        while (shift <= (n - m)) {
+            int j = m - 1;
+
+            // Keep reducing j while characters of the pattern and text match from right to left
+            while (j >= 0 && pattern.charAt(j) == text.charAt(shift + j)) {
+                j--;
+            }
+
+            // If pattern is found, return the starting index of the pattern in the text
+            if (j < 0) {
+                return shift;
+            } else {
+                // Shift the pattern by the bad character rule
+                char mismatchChar = text.charAt(shift + j);
+                shift += Math.max(1, badCharShift.getOrDefault(mismatchChar, m));
+            }
+        }
+
+        // If pattern is not found, return -1
+        return -1;
+    }
+
+    public static void main(String[] args) {
+        String text = "ABAAABCD";
+        String pattern = "ABC";
+
+        int result = boyerMooreSearch(text, pattern);
+
+        if (result != -1) {
+            System.out.println("Pattern found at index " + result);
+        } else {
+            System.out.println("Pattern not found");
+        }
+    }
+}
