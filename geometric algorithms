@@ -1,0 +1,104 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class Main{
+
+    // Method to calculate distance from a point to a line
+    public static double calculateDistance(double A, double B, double C, double x, double y) {
+        return Math.abs(A * x + B * y + C) / Math.sqrt(A * A + B * B);
+    }
+
+    // Method to classify points, calculate mean and distance from line
+    public static void analyzePoints(double A, double B, double C, List<double[]> points) {
+        List<double[]> leftPoints = new ArrayList<>();
+        List<double[]> rightPoints = new ArrayList<>();
+        double totalDistanceLeft = 0;
+        double totalDistanceRight = 0;
+
+        for (double[] point : points) {
+            double x = point[0];
+            double y = point[1];
+            double result = A * x + B * y + C;
+
+            // Calculate distance from the point to the line
+            double distance = calculateDistance(A, B, C, x, y);
+
+            if (result > 0) {
+                rightPoints.add(point);
+                totalDistanceRight += distance;
+                System.out.printf("Point (%.2f, %.2f) is on the right side with distance %.2f\n", x, y, distance);
+            } else if (result < 0) {
+                leftPoints.add(point);
+                totalDistanceLeft += distance;
+                System.out.printf("Point (%.2f, %.2f) is on the left side with distance %.2f\n", x, y, distance);
+            } else {
+                System.out.printf("Point (%.2f, %.2f) is on the line with distance %.2f\n", x, y, distance);
+            }
+        }
+
+        // Calculate mean for left points
+        if (!leftPoints.isEmpty()) {
+            double[] leftMean = calculateMean(leftPoints);
+            double avgDistanceLeft = totalDistanceLeft / leftPoints.size();
+            System.out.printf("Mean of points on the left side: (%.2f, %.2f) with average distance %.2f\n",
+                    leftMean[0], leftMean[1], avgDistanceLeft);
+        } else {
+            System.out.println("No points on the left side.");
+        }
+
+        // Calculate mean for right points
+        if (!rightPoints.isEmpty()) {
+            double[] rightMean = calculateMean(rightPoints);
+            double avgDistanceRight = totalDistanceRight / rightPoints.size();
+            System.out.printf("Mean of points on the right side: (%.2f, %.2f) with average distance %.2f\n",
+                    rightMean[0], rightMean[1], avgDistanceRight);
+        } else {
+            System.out.println("No points on the right side.");
+        }
+    }
+
+    // Method to calculate mean of a list of points
+    private static double[] calculateMean(List<double[]> points) {
+        double sumX = 0;
+        double sumY = 0;
+        for (double[] point : points) {
+            sumX += point[0];
+            sumY += point[1];
+        }
+        int count = points.size();
+        return new double[] { sumX / count, sumY / count };
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Input the line equation coefficients
+        System.out.print("Enter coefficient A: ");
+        double A = scanner.nextDouble();
+        System.out.print("Enter coefficient B: ");
+        double B = scanner.nextDouble();
+        System.out.print("Enter coefficient C: ");
+        double C = scanner.nextDouble();
+
+        // Input the number of points
+        System.out.print("Enter the number of points: ");
+        int numPoints = scanner.nextInt();
+
+        // Input points
+        List<double[]> points = new ArrayList<>();
+        for (int i = 1; i <= numPoints; i++) {
+            System.out.println("Enter coordinates of point " + i + ":");
+            System.out.print("x: ");
+            double x = scanner.nextDouble();
+            System.out.print("y: ");
+            double y = scanner.nextDouble();
+            points.add(new double[] { x, y });
+        }
+
+        // Analyze points for classification, mean, and distance
+        analyzePoints(A, B, C, points);
+
+        scanner.close();
+    }
+}
