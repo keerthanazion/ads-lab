@@ -1,0 +1,56 @@
+import java.awt.Point;
+
+public class Main{
+
+    // Function to check if a point is inside the polygon
+    public static boolean isPointInsidePolygon(Point[] polygon, Point p) {
+        int n = polygon.length;
+        int count = 0;
+        int i = 0;
+        int x1, y1, x2, y2;
+
+        // Loop through all edges of the polygon
+        do {
+            x1 = polygon[i].x;
+            y1 = polygon[i].y;
+            i = (i + 1) % n;
+            x2 = polygon[i].x;
+            y2 = polygon[i].y;
+
+            // Check if the point p lies on the line segment
+            if (p.y > Math.min(y1, y2) && p.y <= Math.max(y1, y2) && p.x <= Math.max(x1, x2) && y1 != y2) {
+                double xIntersect = (p.y - y1) * (x2 - x1) / (y2 - y1) + x1;
+                if (x1 == x2 || p.x <= xIntersect) {
+                    count++;
+                }
+            }
+        } while (i != 0);
+
+        // If the count is odd, the point is inside the polygon
+        return count % 2 != 0;
+    }
+
+    // Main method to test the above function
+    public static void main(String[] args) {
+        // Define the polygon vertices (clockwise or counterclockwise)
+        Point[] polygon = new Point[] {
+            new Point(0, 0),
+            new Point(5, 0),
+            new Point(5, 5),
+            new Point(0, 5)
+        };
+
+        // Point to test
+        Point testPoint = new Point(3, 3);
+
+        // Check if the point is inside the polygon
+        if (isPointInsidePolygon(polygon, testPoint)) {
+            System.out.println("The point is inside the polygon.");
+        } else {
+            System.out.println("The point is outside the polygon.");
+        }
+    }
+}
+
+
+
